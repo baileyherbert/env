@@ -1,0 +1,40 @@
+{
+	"name": "@baileyherbert/env",
+	"version": "dev",
+	"description": "A simple package for reading and validating environment variables.",
+	"author": "Bailey Herbert <hello+npm@bailey.sh> (https://bailey.sh)",
+	"repository": "github:baileyherbert/env",
+	"bugs": "https://github.com/baileyherbert/env/issues",
+	"license": "MIT",
+	"main": "dist/main.js",
+	"types": "dist/main.d.ts",
+	"files": [
+		"dist/**/*"
+	],
+	"keywords": ["environment variables", "environment", "dotenv", "validation", "parser"],
+	"scripts": {
+		"dev": "ts-node-dev --respawn --rs src/main.ts",
+		"build": "rimraf dist && tsc",
+		"watch": "rimraf dist && tsc -w",
+		"start": "node dist/main",
+		"test": "jest"
+	},
+	"devDependencies": {
+		"@types/jest": "^27.0.1",
+		"@types/node": "^14",
+		"jest": "^27.1",
+		"rimraf": "^3.0.2",
+		"ts-jest": "^27.0",
+		"ts-node-dev": "^1.1.8",
+		"typescript": "^4.4"
+	},
+	"jest": {
+		"preset": "ts-jest",
+		"testEnvironment": "node",
+		"globals": {
+			"ts-jest": {
+				"tsconfig": "tests/tsconfig.json"
+			}
+		}
+	}
+}
