@@ -34,6 +34,7 @@ typings/
 .env
 .env.test
 .env*.local
+!tests/artifacts/.env
 .cache
 .parcel-cache
 .next
