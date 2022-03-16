@@ -17,6 +17,9 @@ export * from './errors/EnvironmentValidationError';
  * current working directory as a fallback.
  */
 export const Env = new EnvironmentManager([
-	new ProcessEnvironmentSource(),
-	new FileEnvironmentSource('.env'),
+	new ProcessEnvironmentSource()
 ]);
+
+if (!process.env.ENV_SILENT || ['false', '0'].includes(process.env.ENV_SILENT)) {
+	Env.sources.push(new FileEnvironmentSource('.env'));
+}
