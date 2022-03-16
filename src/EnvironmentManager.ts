@@ -11,7 +11,7 @@ export class EnvironmentManager {
 	/**
 	 * The sources this manager will read variables from.
 	 */
-	protected sources: EnvironmentSource[];
+	public readonly sources: EnvironmentSource[];
 
 	/**
 	 * A collection of validator factories for use with the `rules()` method.
