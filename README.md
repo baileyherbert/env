@@ -43,11 +43,11 @@ acceptable format, like below:
 
 ```ts
 export const Environment = Env.rules({
-	DRIVER: Env.schema.enum(['mysql', 'sqlite'] as const),
-	HOSTNAME: Env.schema.string().optional('localhost'),
-	PORT: Env.schema.number().optional(3306),
-	USERNAME: Env.schema.string(),
-	PASSWORD: Env.schema.string()
+    DRIVER: Env.schema.enum(['mysql', 'sqlite'] as const),
+    HOSTNAME: Env.schema.string().optional('localhost'),
+    PORT: Env.schema.number().optional(3306),
+    USERNAME: Env.schema.string(),
+    PASSWORD: Env.schema.string()
 });
 ```
 
@@ -104,4 +104,12 @@ You can also provide a default value, which will avoid adding `undefined` to the
 
 ```ts
 Env.schema.string().optional('default')
+```
+
+### Disable the `.env` file
+
+You can set the `ENV_SILENT` environment variable on the process to disable the automatic `.env` file.
+
+```
+ENV_SILENT=true
 ```
