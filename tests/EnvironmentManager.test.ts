@@ -71,4 +71,13 @@ describe('EnvironmentManager', function() {
 			STRING2: 'Hello world!'
 		});
 	});
+
+	it('Can use another manager as a source', function() {
+		const sourceA = new MemoryEnvironmentSource();
+		const managerA = new EnvironmentManager(sourceA);
+		const managerB = new EnvironmentManager(managerA);
+
+		sourceA.set('inherited', 'true');
+		expect(managerB.get('inherited')).toBe('true');
+	});
 });

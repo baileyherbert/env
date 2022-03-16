@@ -6,7 +6,7 @@ import { EnvironmentValidationError } from './errors/EnvironmentValidationError'
 import { BooleanEnvironmentValidator } from './validators/BooleanEnvironmentValidator';
 import { NumberEnvironmentValidator } from './validators/NumberEnvironmentValidator';
 
-export class EnvironmentManager {
+export class EnvironmentManager extends EnvironmentSource {
 
 	/**
 	 * The sources this manager will read variables from.
@@ -32,6 +32,8 @@ export class EnvironmentManager {
 	 */
 	public constructor(sources: EnvironmentSource[]);
 	public constructor(sources: EnvironmentSource[] | EnvironmentSource) {
+		super();
+
 		if (!Array.isArray(sources)) {
 			sources = [sources];
 		}
