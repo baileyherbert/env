@@ -11,6 +11,9 @@ export * from './sources/ProcessEnvironmentSource';
 
 export * from './errors/EnvironmentError';
 export * from './errors/EnvironmentValidationError';
+export * from './errors/EnvironmentParseError';
+
+export * from './functions/parseEnv';
 
 /**
  * The global environment manager which reads environment variables from `process.env` first and a `.env` file in the

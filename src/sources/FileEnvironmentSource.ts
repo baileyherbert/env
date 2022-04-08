@@ -1,6 +1,7 @@
 import { EnvironmentSource } from '../EnvironmentSource';
 import fs from 'fs';
 import path from 'path';
+import { EnvironmentParseError, parseEnv } from '../main';
 
 /**
  * An environment source which reads variables from a file.
@@ -59,24 +60,13 @@ export class FileEnvironmentSource extends EnvironmentSource {
 	 * @param content
 	 */
 	protected parseEnv(content: string) {
-		const lines = content.trim().split(/\r\n|\n|\r/g);
-
-		for (let index = 0; index < lines.length; index++) {
-			const line = lines[index].trim();
-			const splitIndex = line.indexOf('=');
-
-			if (line.length === 0 || line[0] === '#') {
-				continue;
+		try {
+			this.values = parseEnv(content);
+		}
+		catch (error) {
+			if (error instanceof EnvironmentParseError) {
+				throw new Error(`Error parsing ${this.path}:${error.line}: ` + error.message);
 			}
-
-			if (splitIndex < 0) {
-				throw new Error(`Error parsing ${this.path}:${index}`);
-			}
-
-			const key = line.substring(0, splitIndex).trimEnd();
-			const value = line.substring(splitIndex + 1);
-
-			this.values.set(key, value);
 		}
 	}
 

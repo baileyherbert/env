@@ -72,6 +72,34 @@ describe('EnvironmentManager', function() {
 		});
 	});
 
+	it('Parses empty values', function() {
+		expect(manager.get('EMPTY')).toBe('');
+	})
+
+	it('Parses values within quotes', function() {
+		expect(manager.get('WITH_QUOTES')).toBe('I am in quotes!');
+		expect(manager.get('WITH_QUOTES_ESCAPED')).toBe('I am in "quotes"!');
+		expect(manager.get('WITH_COMMENT_QUOTES')).toBe('The correct name is # octothorp');
+	});
+
+	it('Ignores comments at the end of lines', function() {
+		expect(manager.get('WITH_COMMENT')).toBe('I have a comment');
+	});
+
+	it('Parses values that span multiple lines', function() {
+		const expected = `I am a multiline\nstring\nwith a #hashtag!`;
+
+		expect(manager.get('MULTILINE')).toBe(expected);
+		expect(manager.get('MULTILINE_ESCAPE')).toBe(expected);
+	});
+
+	it('Handles whitespace around values and names', function() {
+		expect(manager.get('WITH_PADDING')).toBe('Hello!');
+		expect(manager.get('WITH_PADDING_QUOTES')).toBe('Hello!');
+		expect(manager.get('WITH_NAME_PADDING')).toBe('Hello!');
+		expect(manager.get('WITH_QUOTED_PADDING')).toBe(' Hello! ');
+	});
+
 	it('Can use another manager as a source', function() {
 		const sourceA = new MemoryEnvironmentSource();
 		const managerA = new EnvironmentManager(sourceA);

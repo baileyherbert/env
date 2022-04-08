@@ -12,6 +12,10 @@ describe('main', function() {
 		// Errors
 		expect(typeof Main.EnvironmentError).toBe('function');
 		expect(typeof Main.EnvironmentValidationError).toBe('function');
+		expect(typeof Main.EnvironmentParseError).toBe('function');
+
+		// Functions
+		expect(typeof Main.parseEnv).toBe('function');
 
 		// Variables
 		expect(typeof Main.Env).toBe('object');
