@@ -84,11 +84,15 @@ You can enumerate acceptable strings or numbers directly using `as const`:
 Env.schema.enum(['option1', 'option2', ...] as const)
 ```
 
-You can also supply an actual enum object, which supports both string and number values:
+You can also supply an actual enum object, which supports both string and number values. Note that users must specify
+a value from the enumeration rather than a key.
 
 ```ts
-enum Values { A, B };
-Env.schema.enum(Values)
+enum StringValues { A = 'a', B = 'a' };
+enum NumberValues { A = 0, B = 1 };
+
+Env.schema.enum(StringValues) // 'a' or 'b'
+Env.schema.enum(NumberValues) // '0' or '1'
 ```
 
 #### Optional variables
@@ -119,5 +123,5 @@ ENV_SILENT=true
 You can set the `ENV_PATH` environment variable to change the path for the default manager's file source.
 
 ```
-ENV_PATH=config/.env
+ENV_PATH=.env
 ```
