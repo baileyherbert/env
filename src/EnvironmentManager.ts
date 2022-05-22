@@ -9,6 +9,11 @@ import { NumberEnvironmentValidator } from './validators/NumberEnvironmentValida
 export class EnvironmentManager extends EnvironmentSource {
 
 	/**
+	 * The prefix to prepend to all variable names when sending to and receiving from the sources.
+	 */
+	public readonly prefix: string;
+
+	/**
 	 * The sources this manager will read variables from.
 	 */
 	public readonly sources: EnvironmentSource[];
@@ -22,16 +27,22 @@ export class EnvironmentManager extends EnvironmentSource {
 	 * Constructs a new `EnvironmentManager` instance with the given source.
 	 *
 	 * @param source
+	 * @param prefix
+	 *   An optional string prefix to prepend to the beginning of all environment variable names sent between the
+	 *   manager and the source.
 	 */
-	public constructor(source: EnvironmentSource);
+	public constructor(source: EnvironmentSource, prefix?: string);
 
 	/**
 	 * Constructs a new `EnvironmentManager` instance with the given sources.
 	 *
 	 * @param sources
+	 * @param prefix
+	 *   An optional string prefix to prepend to the beginning of all environment variable names sent between the
+	 *   manager and the sources.
 	 */
-	public constructor(sources: EnvironmentSource[]);
-	public constructor(sources: EnvironmentSource[] | EnvironmentSource) {
+	public constructor(sources: EnvironmentSource[], prefix?: string);
+	public constructor(sources: EnvironmentSource[] | EnvironmentSource, prefix?: string) {
 		super();
 
 		if (!Array.isArray(sources)) {
@@ -39,6 +50,7 @@ export class EnvironmentManager extends EnvironmentSource {
 		}
 
 		this.sources = sources;
+		this.prefix = prefix ?? '';
 	}
 
 	/**
@@ -52,9 +64,11 @@ export class EnvironmentManager extends EnvironmentSource {
 	public get(name: string, defaultValue: number): number;
 	public get(name: string, defaultValue: boolean): boolean;
 	public get(name: string, defaultValue?: any): any {
+		const internalName = this.prefix + name;
+
 		for (const source of this.sources) {
-			if (source.has(name)) {
-				const value = source.get(name);
+			if (source.has(internalName)) {
+				const value = source.get(internalName);
 
 				try {
 					switch (typeof defaultValue) {
@@ -65,7 +79,7 @@ export class EnvironmentManager extends EnvironmentSource {
 				}
 				catch (error) {
 					if (error instanceof EnvironmentValidationError) {
-						error.message = name + ' ' + error.message;
+						error.message = internalName + ' ' + error.message;
 					}
 				}
 
@@ -83,8 +97,10 @@ export class EnvironmentManager extends EnvironmentSource {
 	 * @returns
 	 */
 	public has(name: string): boolean {
+		const internalName = this.prefix + name;
+
 		for (const source of this.sources) {
-			if (source.has(name)) {
+			if (source.has(internalName)) {
 				return true;
 			}
 		}
@@ -104,6 +120,8 @@ export class EnvironmentManager extends EnvironmentSource {
 		const errors: string[] = [];
 
 		for (let name in rules) {
+			const internalName = this.prefix + name;
+
 			try {
 				const validator = rules[name];
 
@@ -116,7 +134,7 @@ export class EnvironmentManager extends EnvironmentSource {
 			}
 			catch (error) {
 				if (error instanceof EnvironmentValidationError) {
-					errors.push(`${name} ${error.message}`);
+					errors.push(`${internalName} ${error.message}`);
 				}
 			}
 		}

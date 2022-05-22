@@ -108,4 +108,20 @@ describe('EnvironmentManager', function() {
 		sourceA.set('inherited', 'true');
 		expect(managerB.get('inherited')).toBe('true');
 	});
+
+	it('Supports prefixes', function() {
+		const source = new MemoryEnvironmentSource();
+		const manager = new EnvironmentManager(source, 'PREFIX_');
+
+		source.set('PREFIX_TEST', '2');
+		source.set('TEST', '1');
+
+		expect(manager.get('TEST')).toBe('2');
+
+		const rules = manager.rules({
+			TEST: manager.schema.number()
+		});
+
+		expect(rules.TEST).toBe(2);
+	});
 });
