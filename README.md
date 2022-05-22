@@ -113,3 +113,11 @@ You can set the `ENV_SILENT` environment variable on the process to disable the 
 ```
 ENV_SILENT=true
 ```
+
+### Change the `.env` file location
+
+You can set the `ENV_PATH` environment variable to change the path for the default manager's file source.
+
+```
+ENV_PATH=config/.env
+```
