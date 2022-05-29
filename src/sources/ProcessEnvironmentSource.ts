@@ -13,11 +13,19 @@ export class ProcessEnvironmentSource extends EnvironmentSource {
 	}
 
 	public get(name: string): string | undefined {
-		return process.env[name];
+		if (typeof process !== 'undefined') {
+			return process.env[name];
+		}
+
+		return;
 	}
 
 	public has(name: string): boolean {
-		return name in process.env;
+		if (typeof process !== 'undefined') {
+			return name in process.env;
+		}
+
+		return false;
 	}
 
 }

@@ -1,7 +1,8 @@
 import { EnvironmentSource } from '../EnvironmentSource';
+import { EnvironmentParseError } from '../errors/EnvironmentParseError';
+import { parseEnv } from '../functions/parseEnv';
 import fs from 'fs';
 import path from 'path';
-import { EnvironmentParseError, parseEnv } from '../main';
 
 /**
  * An environment source which reads variables from a file.
