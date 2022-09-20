@@ -20,8 +20,9 @@ export class EnumEnvironmentValidator<T extends string | number | undefined> ext
 	 * Constructs a new `EnumEnvironmentValidator` instance.
 	 *
 	 * @param options The possible options for this variable.
+	 * @param allowValues Whether or not to accept value inputs for keyed enum objects.
 	 */
-	public constructor(options: (string | number)[] | Enum) {
+	public constructor(options: (string | number)[] | Enum, protected allowValues = false) {
 		super();
 
 		if (Array.isArray(options)) {
@@ -56,21 +57,25 @@ export class EnumEnvironmentValidator<T extends string | number | undefined> ext
 				return this.values[caseIndex] as T;
 			}
 
-			throw new EnvironmentValidationError('must be one of [' + this.keys.join(', ') + ']');
+			if (!this.allowValues) {
+				throw new EnvironmentValidationError('must be one of [' + this.keys.join(', ') + ']');
+			}
 		}
 
 		// Match using values
-		else {
-			if (this.values.includes(input)) {
-				return input as T;
-			}
+		if (this.values.includes(input)) {
+			return input as T;
+		}
 
-			if (this.values.includes(Number(input))) {
-				return Number(input) as T;
-			}
+		if (this.values.includes(Number(input))) {
+			return Number(input) as T;
+		}
 
+		if (!this.keys) {
 			throw new EnvironmentValidationError('must be one of [' + this.values.join(', ') + ']');
 		}
+
+		throw new EnvironmentValidationError('must be one of [' + [...this.keys, ...this.values].join(', ') + ']');
 	}
 
 	/**

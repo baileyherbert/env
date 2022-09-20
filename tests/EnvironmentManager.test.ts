@@ -53,6 +53,7 @@ describe('EnvironmentManager', function() {
 			ENUM_NUMBER: manager.schema.enum(NumberEnum),
 			ENUM_CONST: manager.schema.enum(['a', 'b'] as const),
 			ENUM_BY_NAME: manager.schema.enum(NumberEnum),
+			ENUM_BY_VALUE: manager.schema.enum(NumberEnum, true),
 			STRING2: manager.schema.custom(value => {
 				return value + '!';
 			})
@@ -70,6 +71,7 @@ describe('EnvironmentManager', function() {
 			ENUM_NUMBER: NumberEnum.One,
 			ENUM_CONST: 'a',
 			ENUM_BY_NAME: NumberEnum.One,
+			ENUM_BY_VALUE: NumberEnum.One,
 			STRING2: 'Hello world!'
 		});
 	});

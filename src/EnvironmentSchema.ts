@@ -33,15 +33,22 @@ export class EnvironmentSchema {
 	}
 
 	/**
-	 * Creates a new `enum` environment variable, whose value must match one of the given options.
+	 * Creates a new `enum` environment variable, whose input must match one of the given values.
 	 *
-	 * @param options
-	 *   A read-only array of possible string or number values, or a reference to an actual `enum` object.
+	 * @param options A read-only array of possible string or number values.
 	 */
 	public enum<T extends string | number | undefined>(options: ReadonlyArray<T>): EnumEnvironmentValidator<T>;
-	public enum<T extends Enum>(options: T): EnumEnvironmentValidator<EnumValueType<T>>;
-	public enum<T extends string | number | undefined>(options: ReadonlyArray<T>): any {
-		return new EnumEnvironmentValidator(options as any);
+
+	/**
+	 * Creates a new `enum` environment variable, whose input must match one of the keys from the given enum object.
+	 * If specified, both string and numeric values can also be accepted (disabled by default).
+	 *
+	 * @param options The reference to an actual `enum` object.
+	 * @param acceptValues Whether or not to accept values in addition to keys (default: false).
+	 */
+	public enum<T extends Enum>(options: T, acceptValues?: boolean): EnumEnvironmentValidator<EnumValueType<T>>;
+	public enum<T extends string | number | undefined>(options: ReadonlyArray<T>, acceptValues?: boolean): any {
+		return new EnumEnvironmentValidator(options as any, acceptValues);
 	}
 
 	/**
