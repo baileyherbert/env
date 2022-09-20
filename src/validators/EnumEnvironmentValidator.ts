@@ -1,7 +1,7 @@
 import { EnvironmentValidator } from '../EnvironmentValidator';
 import { EnvironmentValidationError } from '../errors/EnvironmentValidationError';
 
-export class EnumEnvironmentValidator<T extends string | number | undefined> extends EnvironmentValidator {
+export class EnumEnvironmentValidator<T extends string | number | undefined | unknown> extends EnvironmentValidator {
 
 	/**
 	 * Whether the environment variable is optional.
@@ -11,7 +11,7 @@ export class EnumEnvironmentValidator<T extends string | number | undefined> ext
 	/**
 	 * The default value to use for the environment variable (if it's optional).
 	 */
-	protected defaultValue?: string | number;
+	protected defaultValue?: T;
 
 	protected keys?: string[];
 	protected values: (string | number)[] = [];
@@ -89,7 +89,7 @@ export class EnumEnvironmentValidator<T extends string | number | undefined> ext
 	 * @param defaultValue
 	 */
 	public optional(defaultValue: T): EnumEnvironmentValidator<T>;
-	public optional(defaultValue?: string | number): EnumEnvironmentValidator<T | undefined> {
+	public optional(defaultValue?: T): EnumEnvironmentValidator<T | undefined> {
 		this.isOptional = true;
 		this.defaultValue = defaultValue as T;
 

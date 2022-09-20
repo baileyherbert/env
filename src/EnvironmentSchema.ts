@@ -68,4 +68,7 @@ interface Enum {
     [id: number | string]: string | number;
 }
 
-type EnumValueType<T extends Enum> = T extends { [id: number | string]: infer U } ? U : never;
+type RemoveIndex<T> = { [ K in keyof T as string extends K ? never : number extends K ? never : K ] : T[K] };
+type Filter<T> = unknown extends T ? string | number : T;
+type Extract<T> = RemoveIndex<T> extends { [id: number | string]: infer U } ? U : never;
+type EnumValueType<T extends Enum> = Filter<Extract<T>>;
