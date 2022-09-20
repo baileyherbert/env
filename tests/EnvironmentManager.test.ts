@@ -126,4 +126,29 @@ describe('EnvironmentManager', function() {
 
 		expect(rules.TEST).toBe(2);
 	});
+
+	it('Supports applying environment to process.env', function() {
+		const source = new MemoryEnvironmentSource();
+		const manager = new EnvironmentManager(source);
+
+		source.set('APPLY_TEST', 'process');
+		expect(process.env.APPLY_TEST).toBe(undefined);
+
+		manager.apply();
+		expect(process.env.APPLY_TEST).toBe('process');
+	});
+
+	it('Supports applying environment to objects', function() {
+		const source = new MemoryEnvironmentSource();
+		const manager = new EnvironmentManager(source);
+		const o: Record<string, string> = {};
+
+		source.set('APPLY_TEST', 'object');
+		expect(process.env.APPLY_TEST).not.toBe('object');
+		expect(o.APPLY_TEST).toBe(undefined);
+
+		manager.apply(o);
+		expect(process.env.APPLY_TEST).not.toBe('object');
+		expect(o.APPLY_TEST).toBe('object');
+	});
 });

@@ -163,6 +163,25 @@ export class EnvironmentManager extends EnvironmentSource {
 		return transformed;
 	}
 
+	/**
+	 * Applies this manager's environment variables to the global `process` object. You can also provide a custom
+	 * object to augment instead.
+	 */
+	public apply(object?: any) {
+		if (typeof object !== 'object') {
+			if (typeof process !== 'object') {
+				return;
+			}
+
+			object = process.env;
+		}
+
+		for (const [key, value] of this.all()) {
+			object[key] = value;
+		}
+
+	}
+
 }
 
 interface EnvironmentRules {
