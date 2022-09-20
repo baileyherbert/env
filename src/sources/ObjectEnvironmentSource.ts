@@ -29,4 +29,8 @@ export class ObjectEnvironmentSource extends EnvironmentSource {
 		return this.values.has(name);
 	}
 
+	public all() {
+		return this.values;
+	}
+
 }

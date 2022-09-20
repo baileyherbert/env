@@ -14,4 +14,9 @@ export abstract class EnvironmentSource {
 	 */
 	public abstract has(name: string): boolean;
 
+	/**
+	 * Returns a map containing all environment variables in the source.
+	 */
+	public abstract all(): Map<string, string>;
+
 }

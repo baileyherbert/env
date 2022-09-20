@@ -79,6 +79,10 @@ export class FileEnvironmentSource extends EnvironmentSource {
 		return this.values.has(name);
 	}
 
+	public all() {
+		return this.values;
+	}
+
 }
 
 /**

@@ -109,6 +109,23 @@ export class EnvironmentManager extends EnvironmentSource {
 	}
 
 	/**
+	 * Returns a map containing all environment variables in the manager (in raw string format).
+	 */
+	public all(): Map<string, string> {
+		const environment = new Map<string, string>();
+
+		for (const source of this.sources) {
+			for (const [key, value] of source.all()) {
+				if (!environment.has(key)) {
+					environment.set(key, value);
+				}
+			}
+		}
+
+		return environment;
+	}
+
+	/**
 	 * Builds an object containing environment variable values, all parsed and validated according to the specified
 	 * schema. Throws an `EnvironmentError` instance if there are any errors.
 	 *

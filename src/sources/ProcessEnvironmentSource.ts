@@ -28,4 +28,12 @@ export class ProcessEnvironmentSource extends EnvironmentSource {
 		return false;
 	}
 
+	public all() {
+		if (typeof process !== 'undefined') {
+			return new Map(Object.entries(process.env));
+		}
+
+		return new Map()
+	}
+
 }

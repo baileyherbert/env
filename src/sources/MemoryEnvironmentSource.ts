@@ -30,6 +30,10 @@ export class MemoryEnvironmentSource extends EnvironmentSource {
 		return this.values.has(name);
 	}
 
+	public all() {
+		return this.values;
+	}
+
 	/**
 	 * Sets the value of the specified environment variable.
 	 *
