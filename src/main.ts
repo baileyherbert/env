@@ -8,6 +8,7 @@ export * from './EnvironmentSource';
 export * from './sources/FileEnvironmentSource';
 export * from './sources/MemoryEnvironmentSource';
 export * from './sources/ProcessEnvironmentSource';
+export * from './sources/ObjectEnvironmentSource';
 
 export * from './errors/EnvironmentError';
 export * from './errors/EnvironmentValidationError';
