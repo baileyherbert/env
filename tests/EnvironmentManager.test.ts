@@ -39,7 +39,7 @@ describe('EnvironmentManager', function() {
 
 	it('Can parse from schema rules', function() {
 		enum StringEnum { A = 'a', B = 'b' };
-		enum NumberEnum { A, B };
+		enum NumberEnum { One, Two };
 
 		const parsed = manager.rules({
 			STRING: manager.schema.string(),
@@ -52,6 +52,7 @@ describe('EnvironmentManager', function() {
 			ENUM: manager.schema.enum(StringEnum),
 			ENUM_NUMBER: manager.schema.enum(NumberEnum),
 			ENUM_CONST: manager.schema.enum(['a', 'b'] as const),
+			ENUM_BY_NAME: manager.schema.enum(NumberEnum),
 			STRING2: function(value) {
 				return value + '!';
 			}
@@ -66,8 +67,9 @@ describe('EnvironmentManager', function() {
 			OPTIONAL: 'default',
 			OPTIONAL_NO_DEFAULT: undefined,
 			ENUM: StringEnum.A,
-			ENUM_NUMBER: NumberEnum.A,
+			ENUM_NUMBER: NumberEnum.One,
 			ENUM_CONST: 'a',
+			ENUM_BY_NAME: NumberEnum.One,
 			STRING2: 'Hello world!'
 		});
 	});

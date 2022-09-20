@@ -13,10 +13,8 @@ export class EnumEnvironmentValidator<T extends string | number | undefined> ext
 	 */
 	protected defaultValue?: string | number;
 
-	/**
-	 * The options that are available.
-	 */
-	protected options: (string | number)[];
+	protected keys?: string[];
+	protected values: (string | number)[] = [];
 
 	/**
 	 * Constructs a new `EnumEnvironmentValidator` instance.
@@ -27,15 +25,11 @@ export class EnumEnvironmentValidator<T extends string | number | undefined> ext
 		super();
 
 		if (Array.isArray(options)) {
-			this.options = options;
+			this.values = options;
 		}
 		else {
-			this.options = Object.values(options);
-
-			const keys = Object.keys(options).filter(k => typeof k === 'string');
-			const values = keys.map(k => options[k as any]);
-
-			this.options = values;
+			this.keys = Object.keys(options).filter(k => !k.match(/^\d+$/));
+			this.values = this.keys.map(k => options[k as any]);
 		}
 	}
 
@@ -48,15 +42,35 @@ export class EnumEnvironmentValidator<T extends string | number | undefined> ext
 			throw new EnvironmentValidationError('is required but was not available');
 		}
 
-		if (this.options.includes(input)) {
-			return input as T;
+		// Match using keys
+		if (this.keys) {
+			// Match by exact key
+			const index = this.keys.indexOf(input);
+			if (index >= 0) {
+				return this.values[index] as T;
+			}
+
+			// Match by case-insensitive key
+			const caseIndex = this.keys.findIndex(key => key.toLowerCase() === input.toLowerCase());
+			if (caseIndex >= 0) {
+				return this.values[caseIndex] as T;
+			}
+
+			throw new EnvironmentValidationError('must be one of [' + this.keys.join(', ') + ']');
 		}
 
-		if (this.options.includes(Number(input))) {
-			return Number(input) as T;
-		}
+		// Match using values
+		else {
+			if (this.values.includes(input)) {
+				return input as T;
+			}
 
-		throw new EnvironmentValidationError('must be one of [' + this.options.join(', ') + ']');
+			if (this.values.includes(Number(input))) {
+				return Number(input) as T;
+			}
+
+			throw new EnvironmentValidationError('must be one of [' + this.values.join(', ') + ']');
+		}
 	}
 
 	/**
