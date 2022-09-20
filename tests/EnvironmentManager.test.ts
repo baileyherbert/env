@@ -53,9 +53,9 @@ describe('EnvironmentManager', function() {
 			ENUM_NUMBER: manager.schema.enum(NumberEnum),
 			ENUM_CONST: manager.schema.enum(['a', 'b'] as const),
 			ENUM_BY_NAME: manager.schema.enum(NumberEnum),
-			STRING2: function(value) {
+			STRING2: manager.schema.custom(value => {
 				return value + '!';
-			}
+			})
 		});
 
 		expect(parsed).toMatchObject({

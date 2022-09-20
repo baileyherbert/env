@@ -44,6 +44,17 @@ export class EnvironmentSchema {
 		return new EnumEnvironmentValidator(options as any);
 	}
 
+	/**
+	 * Allows you to parse the value manually with a function. Return the parsed value in any format, and throw an
+	 * instance of `EnvironmentValidationError` if the value is not acceptable.
+	 *
+	 * @param validator
+	 * @returns
+	 */
+	public custom(validator: (value?: string) => any) {
+		return validator;
+	}
+
 }
 
 interface Enum {
