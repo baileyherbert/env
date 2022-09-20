@@ -9,6 +9,7 @@ describe('main', function() {
 		expect(typeof Main.MemoryEnvironmentSource).toBe('function');
 		expect(typeof Main.ProcessEnvironmentSource).toBe('function');
 		expect(typeof Main.ObjectEnvironmentSource).toBe('function');
+		expect(typeof Main.StringEnvironmentSource).toBe('function');
 
 		// Errors
 		expect(typeof Main.EnvironmentError).toBe('function');
