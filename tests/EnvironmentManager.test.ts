@@ -56,7 +56,10 @@ describe('EnvironmentManager', function() {
 			ENUM_BY_VALUE: manager.schema.enum(NumberEnum, true),
 			STRING2: manager.schema.custom(value => {
 				return value + '!';
-			})
+			}),
+			STRING3: manager.schema.custom(false, value => {
+				return value + '!';
+			}),
 		});
 
 		expect(parsed).toMatchObject({
@@ -72,7 +75,8 @@ describe('EnvironmentManager', function() {
 			ENUM_CONST: 'a',
 			ENUM_BY_NAME: NumberEnum.One,
 			ENUM_BY_VALUE: NumberEnum.One,
-			STRING2: 'Hello world!'
+			STRING2: 'Hello world!',
+			STRING3: 'undefined!'
 		});
 	});
 

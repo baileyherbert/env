@@ -1,3 +1,4 @@
+import { EnvironmentValidationError } from './errors/EnvironmentValidationError';
 import { BooleanEnvironmentValidator } from './validators/BooleanEnvironmentValidator';
 import { EnumEnvironmentValidator } from './validators/EnumEnvironmentValidator';
 import { NumberEnvironmentValidator } from './validators/NumberEnvironmentValidator';
@@ -55,11 +56,34 @@ export class EnvironmentSchema {
 	 * Allows you to parse the value manually with a function. Return the parsed value in any format, and throw an
 	 * instance of `EnvironmentValidationError` if the value is not acceptable.
 	 *
+	 * @param required Whether or not the validator should throw errors if the value is not set.
 	 * @param validator
 	 * @returns
 	 */
-	public custom(validator: (value?: string) => any) {
-		return validator;
+	public custom<T>(required: true, validator: (value: string) => T): (value?: string) => T;
+	public custom<T>(required: false, validator: (value?: string) => T): (value?: string) => T;
+
+	/**
+	 * Allows you to parse the value manually with a function. Return the parsed value in any format, and throw an
+	 * instance of `EnvironmentValidationError` if the value is not acceptable.
+	 *
+	 * @param validator
+	 * @returns
+	 */
+	public custom<T>(validator: (value?: string) => T): (value?: string) => T;
+	public custom<T>(required: boolean | ((value?: string) => T), validator?: any) {
+		if (typeof required !== 'boolean') {
+			validator = required;
+			required = false;
+		}
+
+		return (value?: string) => {
+			if (required && value === undefined) {
+				throw new EnvironmentValidationError('is required but was not available');
+			}
+
+			return validator(value);
+		};
 	}
 
 }
