@@ -130,9 +130,10 @@ export class EnvironmentManager extends EnvironmentSource {
 	 * schema. Throws an `EnvironmentError` instance if there are any errors.
 	 *
 	 * @param rules
+	 * @param throwErrors
 	 * @returns
 	 */
-	public rules<T extends EnvironmentRules>(rules: T): EnvironmentRulesConverted<T> {
+	public rules<T extends EnvironmentRules>(rules: T, throwErrors = true): EnvironmentRulesConverted<T> {
 		const transformed: any = {};
 		const errors: string[] = [];
 
@@ -156,7 +157,7 @@ export class EnvironmentManager extends EnvironmentSource {
 			}
 		}
 
-		if (errors.length > 0) {
+		if (errors.length > 0 && throwErrors) {
 			throw new EnvironmentError(errors);
 		}
 

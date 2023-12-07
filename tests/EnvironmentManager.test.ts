@@ -157,4 +157,12 @@ describe('EnvironmentManager', function() {
 		expect(process.env.APPLY_TEST).not.toBe('object');
 		expect(o.APPLY_TEST).toBe('object');
 	});
+
+	it('Supports validation without throwing errors', function() {
+		const parsed = manager.rules({
+			STRING: manager.schema.boolean(),
+		}, false);
+
+		expect(parsed.STRING).toBe(undefined);
+	});
 });
