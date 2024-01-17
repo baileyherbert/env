@@ -43,7 +43,7 @@ acceptable format, like below:
 
 ```ts
 export const Environment = Env.rules({
-    DRIVER: Env.schema.enum(['mysql', 'sqlite'] as const),
+    DRIVER: Env.schema.enum(['mysql', 'sqlite']),
     HOSTNAME: Env.schema.string().optional('localhost'),
     PORT: Env.schema.number().optional(3306),
     USERNAME: Env.schema.string(),
@@ -78,10 +78,10 @@ Env.schema.boolean()
 
 #### Enum variables
 
-You can enumerate acceptable strings or numbers directly using `as const`:
+You can enumerate acceptable strings or numbers directly by passing an array of values.
 
 ```ts
-Env.schema.enum(['option1', 'option2', ...] as const)
+Env.schema.enum(['option1', 'option2', ...])
 ```
 
 You can also supply an actual enum object, which supports both string and number values. Note that users must specify
@@ -108,6 +108,24 @@ You can also provide a default value, which will avoid adding `undefined` to the
 
 ```ts
 Env.schema.string().optional('default')
+```
+
+#### Conditional variables
+
+The `when()` method can be used to define a variable that won't be read or parsed except under certain conditions. Pass
+a callback function which returns a boolean. The function will receive an object containing all parsed variables up to
+that point in the schema.
+
+```ts
+Env.schema.string().when(e => e.BOOLEAN_VARIABLE)
+Env.schema.string().when(e => e.STRING_VARIABLE === 'target_value')
+```
+
+If the conditional function returns false, the variable will resolve to `undefined` by default. You can override this
+default value using the `optional()` method.
+
+```ts
+Env.schema.string().when(e => e.BOOLEAN_VARIABLE).option('default')
 ```
 
 ### Disable the `.env` file
