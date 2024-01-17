@@ -1,4 +1,4 @@
-import { EnvironmentValidator } from '../EnvironmentValidator';
+import { EnvironmentValidator, WhenCallback, WhenEnvironment } from '../EnvironmentValidator';
 import { EnvironmentValidationError } from '../errors/EnvironmentValidationError';
 
 export class StringEnvironmentValidator<T extends string | undefined = string> extends EnvironmentValidator {
@@ -17,7 +17,17 @@ export class StringEnvironmentValidator<T extends string | undefined = string> e
 		super();
 	}
 
-	public validate(input: string | undefined): T {
+	/**
+	 * Validates and returns the final, converted value of the given environment variable value string.
+	 *
+	 * @param input The raw value of the environment variable or `undefined` if not set.
+	 * @param environment An object containing other environment variables that have already been parsed.
+	 */
+	public validate(input: string | undefined, environment: WhenEnvironment): T {
+		if (this.whenConditionCallback && !this.whenConditionCallback(environment)) {
+			return this.defaultValue as T;
+		}
+
 		if (input === undefined) {
 			if (this.isOptional) {
 				return this.defaultValue as T;
@@ -39,11 +49,19 @@ export class StringEnvironmentValidator<T extends string | undefined = string> e
 	 *
 	 * @param defaultValue
 	 */
-	public optional(defaultValue: string): StringEnvironmentValidator<T>;
+	public optional(defaultValue: string): StringEnvironmentValidator<NonNullable<T>>;
 	public optional(defaultValue?: string): StringEnvironmentValidator<T | undefined> {
 		this.isOptional = true;
 		this.defaultValue = defaultValue as T;
 
+		return this;
+	}
+
+	/**
+	 * Marks the variable as optional, and only parses it if the given function returns `true`.
+	 */
+	public when(fn: WhenCallback): StringEnvironmentValidator<T | undefined> {
+		this.whenConditionCallback = fn;
 		return this;
 	}
 

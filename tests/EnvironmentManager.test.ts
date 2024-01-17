@@ -1,5 +1,5 @@
 import { EnvironmentManager } from '../src/EnvironmentManager';
-import { FileEnvironmentSource, MemoryEnvironmentSource } from '../src/main';
+import { FileEnvironmentSource, MemoryEnvironmentSource, ObjectEnvironmentSource } from '../src/main';
 import path from 'path';
 
 describe('EnvironmentManager', function() {
@@ -166,5 +166,71 @@ describe('EnvironmentManager', function() {
 		}, false);
 
 		expect(parsed.STRING).toBe(undefined);
+	});
+
+	it('Supports conditional variables', function() {
+		const source = new ObjectEnvironmentSource({
+			CONDITION1: 'true',
+			CONDITION2: 'false',
+			DATA1: '1',
+			DATA2: '2',
+			DATA3: '3',
+			DATA4: '4',
+			DATA5: '5',
+			DATA6: '6',
+			DATA7: '7',
+			DATA8: '8',
+			DATA9: '9',
+		});
+
+		const manager = new EnvironmentManager(source);
+		const parsed = manager.rules({
+			// Two booleans read from the source
+			CONDITION1: manager.schema.boolean(),
+			CONDITION2: manager.schema.boolean(),
+
+			// Two booleans with default values
+			CONDITION3: manager.schema.boolean().optional(true),
+			CONDITION4: manager.schema.boolean().optional(false),
+
+			// One boolean with no value
+			CONDITION5: manager.schema.boolean().optional(),
+
+			// These variables should be undefined
+			DATA1: manager.schema.string().when(() => false),
+			DATA2: manager.schema.string().when(() => false).optional(),
+			DATA8: manager.schema.string().when(e => e.CONDITION2).optional(),
+
+			// These variables should use default values
+			DATA3: manager.schema.string().when(() => false).optional('default'),
+			DATA7: manager.schema.string().when(e => e.CONDITION2).optional('default'),
+
+			// These variables should read from the source
+			DATA4: manager.schema.string().when(() => true),
+			DATA5: manager.schema.string().when(() => true).optional('default'),
+			DATA6: manager.schema.string().when(e => e.CONDITION1).optional('default'),
+			DATA9: manager.schema.string().when(e => e.CONDITION1),
+		});
+
+		expect(parsed).toMatchObject({
+			CONDITION1: true,
+			CONDITION2: false,
+
+			CONDITION3: true,
+			CONDITION4: false,
+			CONDITION5: undefined,
+
+			DATA1: undefined,
+			DATA2: undefined,
+			DATA8: undefined,
+
+			DATA3: 'default',
+			DATA7: 'default',
+
+			DATA4: '4',
+			DATA5: '5',
+			DATA6: '6',
+			DATA9: '9',
+		});
 	});
 });

@@ -73,8 +73,8 @@ export class EnvironmentManager extends EnvironmentSource {
 				try {
 					switch (typeof defaultValue) {
 						case 'string': return value;
-						case 'number': return (new NumberEnvironmentValidator()).validate(value);
-						case 'boolean': return (new BooleanEnvironmentValidator()).validate(value);
+						case 'number': return (new NumberEnvironmentValidator()).validate(value, {});
+						case 'boolean': return (new BooleanEnvironmentValidator()).validate(value, {});
 					}
 				}
 				catch (error) {
@@ -147,7 +147,7 @@ export class EnvironmentManager extends EnvironmentSource {
 					transformed[name] = validator(this.get(name));
 				}
 				else {
-					transformed[name] = validator.validate(this.get(name));
+					transformed[name] = validator.validate(this.get(name), transformed);
 				}
 			}
 			catch (error) {
