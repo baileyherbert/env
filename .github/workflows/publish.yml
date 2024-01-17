@@ -12,11 +12,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
+        with:
+          registry-url: 'https://registry.npmjs.org'
       - run: npm install
       - run: npm test
       - run: npm run build
       - id: get_version
-        uses: baileyherbert/version-action@v3
+        uses: baileyherbert/version-action@v3.0.0
       - name: Set user
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
