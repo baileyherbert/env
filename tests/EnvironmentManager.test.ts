@@ -1,6 +1,6 @@
 import { EnvironmentManager } from '../src/EnvironmentManager';
-import path from 'path';
 import { FileEnvironmentSource, MemoryEnvironmentSource } from '../src/main';
+import path from 'path';
 
 describe('EnvironmentManager', function() {
 	const artifact = path.resolve(__dirname, 'artifacts/.env');
@@ -52,6 +52,7 @@ describe('EnvironmentManager', function() {
 			ENUM: manager.schema.enum(StringEnum),
 			ENUM_NUMBER: manager.schema.enum(NumberEnum),
 			ENUM_CONST: manager.schema.enum(['a', 'b'] as const),
+			ENUM_CONST_INFERRED: manager.schema.enum(['a', 'b']),
 			ENUM_BY_NAME: manager.schema.enum(NumberEnum),
 			ENUM_BY_VALUE: manager.schema.enum(NumberEnum, true),
 			STRING2: manager.schema.custom(value => {
@@ -73,6 +74,7 @@ describe('EnvironmentManager', function() {
 			ENUM: StringEnum.A,
 			ENUM_NUMBER: NumberEnum.One,
 			ENUM_CONST: 'a',
+			ENUM_CONST_INFERRED: 'a',
 			ENUM_BY_NAME: NumberEnum.One,
 			ENUM_BY_VALUE: NumberEnum.One,
 			STRING2: 'Hello world!',
