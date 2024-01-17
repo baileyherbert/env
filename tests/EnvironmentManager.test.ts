@@ -233,4 +233,113 @@ describe('EnvironmentManager', function() {
 			DATA9: '9',
 		});
 	});
+
+	it('Supports partial values', function() {
+		const source = new ObjectEnvironmentSource({
+			A: 'i',
+			B: 'in',
+			C: 'inf',
+			D: 'info',
+			E: 'IN',
+			AMBIGUOUS_A: 't',
+			AMBIGUOUS_B: 'trace',
+			AMBIGUOUS_C: 'trace2',
+		});
+
+		const manager = new EnvironmentManager(source);
+		const values = ['info', 'error', 'debug', 'warn', 'trace', 'trace2'] as const;
+
+		enum LoggingLevel {
+			INFO = 'info',
+			ERROR = 'error',
+			DEBUG = 'debug',
+			WARN = 'warn',
+			TRACE = 'trace',
+			TRACE2 = 'trace2',
+		};
+
+		const parsedFromStrings = manager.rules({
+			A: manager.schema.enum(values).allowPartial(),
+			B: manager.schema.enum(values).allowPartial(),
+			C: manager.schema.enum(values).allowPartial(),
+			D: manager.schema.enum(values).allowPartial(),
+			E: manager.schema.enum(values).allowPartial(),
+			UNSET: manager.schema.enum(values).allowPartial().optional(),
+			AMBIGUOUS_B: manager.schema.enum(values).allowPartial(),
+			AMBIGUOUS_C: manager.schema.enum(values).allowPartial(),
+		});
+
+		const parsedFromEnum = manager.rules({
+			A: manager.schema.enum(LoggingLevel).allowPartial(),
+			B: manager.schema.enum(LoggingLevel).allowPartial(),
+			C: manager.schema.enum(LoggingLevel).allowPartial(),
+			D: manager.schema.enum(LoggingLevel).allowPartial(),
+			E: manager.schema.enum(LoggingLevel).allowPartial(),
+			UNSET: manager.schema.enum(values).allowPartial().optional(),
+			AMBIGUOUS_B: manager.schema.enum(values).allowPartial(),
+			AMBIGUOUS_C: manager.schema.enum(values).allowPartial(),
+		});
+
+		const parsedFromEnumWithValues = manager.rules({
+			A: manager.schema.enum(LoggingLevel, true).allowPartial(),
+			B: manager.schema.enum(LoggingLevel, true).allowPartial(),
+			C: manager.schema.enum(LoggingLevel, true).allowPartial(),
+			D: manager.schema.enum(LoggingLevel, true).allowPartial(),
+			E: manager.schema.enum(LoggingLevel, true).allowPartial(),
+			UNSET: manager.schema.enum(values).allowPartial().optional(),
+			AMBIGUOUS_B: manager.schema.enum(values).allowPartial(),
+			AMBIGUOUS_C: manager.schema.enum(values).allowPartial(),
+		});
+
+		expect(parsedFromStrings).toMatchObject({
+			A: 'info',
+			B: 'info',
+			C: 'info',
+			D: 'info',
+			E: 'info',
+			UNSET: undefined,
+			AMBIGUOUS_B: 'trace',
+			AMBIGUOUS_C: 'trace2',
+		});
+
+		expect(parsedFromEnum).toMatchObject({
+			A: LoggingLevel.INFO,
+			B: LoggingLevel.INFO,
+			C: LoggingLevel.INFO,
+			D: LoggingLevel.INFO,
+			E: LoggingLevel.INFO,
+			UNSET: undefined,
+			AMBIGUOUS_B: LoggingLevel.TRACE,
+			AMBIGUOUS_C: LoggingLevel.TRACE2,
+		});
+
+		expect(parsedFromEnumWithValues).toMatchObject({
+			A: LoggingLevel.INFO,
+			B: LoggingLevel.INFO,
+			C: LoggingLevel.INFO,
+			D: LoggingLevel.INFO,
+			E: LoggingLevel.INFO,
+			UNSET: undefined,
+			AMBIGUOUS_B: LoggingLevel.TRACE,
+			AMBIGUOUS_C: LoggingLevel.TRACE2,
+		});
+
+		expect(() => {
+			manager.rules({
+				AMBIGUOUS_A: manager.schema.enum(values).allowPartial()
+			});
+		}).toThrow('AMBIGUOUS_A must be one of');
+
+		expect(() => {
+			manager.rules({
+				AMBIGUOUS_A: manager.schema.enum(LoggingLevel).allowPartial()
+			});
+		}).toThrow('AMBIGUOUS_A must be one of');
+
+		expect(() => {
+			manager.rules({
+				AMBIGUOUS_A: manager.schema.enum(LoggingLevel, true).allowPartial()
+			});
+		}).toThrow('AMBIGUOUS_A must be one of');
+	});
 });

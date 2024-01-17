@@ -95,6 +95,22 @@ Env.schema.enum(StringValues) // 'a' or 'b'
 Env.schema.enum(NumberValues) // '0' or '1'
 ```
 
+When supplying an enum object, user input is only matched against keys by default. The second parameter can be set to
+`true` to enable matching against values as well.
+
+```ts
+Env.schema.enum(NumberValues) // Acceptable inputs: "A", "B"
+Env.schema.enum(NumberValues, true) // Acceptable inputs: "A", "B", "0", "1"
+```
+
+Finally, enum variables expose an `allowPartial()` method which enables partial matching. For example, if the enum for
+a logging level contains `information`, then partial matching would allow the user to specify `info`. This only works
+if the partial matches a single key (or value, when enabled).
+
+```ts
+Env.schema.enum(LogLevel).allowPartial()
+```
+
 #### Optional variables
 
 To mark an environment variable as optional, call the `optional()` method on it. This will automatically add `undefined`

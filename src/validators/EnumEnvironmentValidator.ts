@@ -13,6 +13,11 @@ export class EnumEnvironmentValidator<T extends string | number | undefined | un
 	 */
 	protected defaultValue?: T;
 
+	/**
+	 * Whether or not to allow partial values when matching user input against the enum.
+	 */
+	protected allowPartialValues = false;
+
 	protected keys?: string[];
 	protected values: (string | number)[] = [];
 
@@ -55,6 +60,15 @@ export class EnumEnvironmentValidator<T extends string | number | undefined | un
 
 		// Match using keys
 		if (this.keys) {
+			// Match by partial key
+			if (this.allowPartialValues) {
+				const match = this.getMatchFromPartialString(input, this.keys);
+
+				if (match !== undefined) {
+					return this.values[this.keys.indexOf(match)] as T;
+				}
+			}
+
 			// Match by exact key
 			const index = this.keys.indexOf(input);
 			if (index >= 0) {
@@ -72,6 +86,18 @@ export class EnumEnvironmentValidator<T extends string | number | undefined | un
 			}
 		}
 
+		// Match by partial value
+		if (this.allowPartialValues) {
+			const match = this.getMatchFromPartialString(
+				input,
+				this.values.filter(value => typeof value === 'string') as string[]
+			);
+
+			if (match !== undefined) {
+				return match as T;
+			}
+		}
+
 		// Match using values
 		if (this.values.includes(input)) {
 			return input as T;
@@ -86,6 +112,24 @@ export class EnumEnvironmentValidator<T extends string | number | undefined | un
 		}
 
 		throw new EnvironmentValidationError('must be one of [' + [...this.keys, ...this.values].join(', ') + ']');
+	}
+
+	/**
+	 * Finds a value from the enum that starts with the given input and returns it if there's only a single match.
+	 * Otherwise, returns `undefined`.
+	 *
+	 * @param input
+	 * @param options
+	 * @returns
+	 */
+	private getMatchFromPartialString(input: string, options: string[]) {
+		const matches = options.filter(o => o.toLowerCase().startsWith(input.toLowerCase()));
+
+		if (matches.length === 1) {
+			return matches[0];
+		}
+
+		return undefined;
 	}
 
 	/**
@@ -111,6 +155,19 @@ export class EnumEnvironmentValidator<T extends string | number | undefined | un
 	 */
 	public when(fn: WhenCallback): EnumEnvironmentValidator<T | undefined> {
 		this.whenConditionCallback = fn;
+		return this;
+	}
+
+	/**
+	 * Allows partial values when matching user input against the enum. For this to work, the following conditions must
+	 * be true:
+	 *
+	 * - The enum must have a value that starts with the user's input (case-insensitive)
+	 * - The enum values must be strings (numeric values are not supported)
+	 * - There must be only one matching value
+	 */
+	public allowPartial(): EnumEnvironmentValidator<T> {
+		this.allowPartialValues = true;
 		return this;
 	}
 
